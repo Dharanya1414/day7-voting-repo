@@ -74,6 +74,7 @@ function App() {
         <Routes>
           <Route path="/" element={<VotingPage />} />
           <Route path="/results" element={<ResultsPage />} />
+          <Route path="*" element={<VotingPage />} /> {/* fallback */}
         </Routes>
       </BrowserRouter>
     </VoteProvider>
@@ -83,3 +84,4 @@ function App() {
 // Render App
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
+
