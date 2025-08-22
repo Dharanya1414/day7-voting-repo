@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-// Context for sharing vote data
+// Context to store votes
 const VoteContext = createContext();
 
 function VotingPage() {
@@ -12,53 +12,51 @@ function VotingPage() {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div>
       <h1>Voting Page</h1>
-      {Object.keys(votes).map((candidate) => (
-        <div key={candidate} style={{ margin: "10px" }}>
-          <h3>{candidate}: {votes[candidate]} votes</h3>
-          <button onClick={() => handleVote(candidate)}>Vote {candidate}</button>
-        </div>
-      ))}
-      <br />
-      <Link to="/results">Go to Results</Link>
+      <button onClick={() => handleVote("A")}>Vote Candidate A</button>
+      <button onClick={() => handleVote("B")}>Vote Candidate B</button>
+      <button onClick={() => handleVote("C")}>Vote Candidate C</button>
+
+      <h2>Current Votes</h2>
+      <p>Candidate A: {votes.A}</p>
+      <p>Candidate B: {votes.B}</p>
+      <p>Candidate C: {votes.C}</p>
     </div>
   );
 }
 
 function ResultsPage() {
   const { votes } = useContext(VoteContext);
-  const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
-  const leader = Object.keys(votes).reduce((a, b) =>
-    votes[a] > votes[b] ? a : b
-  );
+
+  const totalVotes = votes.A + votes.B + votes.C;
+  let leader = "No votes yet";
+  if (totalVotes > 0) {
+    leader = Object.keys(votes).reduce((a, b) =>
+      votes[a] > votes[b] ? a : b
+    );
+  }
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div>
       <h1>Results Page</h1>
-      {Object.keys(votes).map((candidate) => (
-        <h3 key={candidate}>
-          {candidate}: {votes[candidate]} votes
-        </h3>
-      ))}
-      <h2>Total Votes: {totalVotes}</h2>
+      <p>Candidate A: {votes.A}</p>
+      <p>Candidate B: {votes.B}</p>
+      <p>Candidate C: {votes.C}</p>
       <h2>Leading Candidate: {leader}</h2>
-      <br />
-      <Link to="/">Back to Voting</Link>
     </div>
   );
 }
 
 export default function App() {
-  const [votes, setVotes] = useState({
-    "Candidate A": 0,
-    "Candidate B": 0,
-    "Candidate C": 0,
-  });
+  const [votes, setVotes] = useState({ A: 0, B: 0, C: 0 });
 
   return (
     <VoteContext.Provider value={{ votes, setVotes }}>
       <Router>
+        <nav>
+          <Link to="/">Voting</Link> | <Link to="/results">Results</Link>
+        </nav>
         <Routes>
           <Route path="/" element={<VotingPage />} />
           <Route path="/results" element={<ResultsPage />} />
@@ -67,4 +65,5 @@ export default function App() {
     </VoteContext.Provider>
   );
 }
+
 
